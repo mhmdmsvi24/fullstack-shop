@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "./App.css";
+
+@theme {
+  --color-sunburst-yellow: #ffeeb55;
+  --color-obsidian-purple: #3c1950;
+  --color-primary: '#1F2937';
+  --color-secondary: '#F59E0B';
+  --color-accent: '#10B981';
+  --color-modalBg: 'rgba(31,41, 55, 0.8)';
+}
