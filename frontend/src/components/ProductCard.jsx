@@ -8,12 +8,18 @@ function ProductCard({ product, onOpenModal }) {
 
   return (
     <div>
-      <div className="flex flex-col m-1 rounded-xl overflow-hidden font-bold relative transition-all duration-300 group shadow-[1px_1px_10px_3px_rgba(31,41,55,0.3)]">
+      <div className="flex flex-col rounded-xl overflow-hidden font-bold relative transition-all duration-300 group shadow-[1px_1px_10px_3px_rgba(31,41,55,0.3)] max-w-100 mx-auto md:max-w-full h-full justify-between">
         {/* Card Discount */}
-        {product.discount > 0 && <div className="absolute top-0 left-0 m-3 bg-blue-50 text-red-600 rounded-xl px-2 py-1 text-sm">%{product.discount} OFF</div>}
+        {
+          product.discount > 0
+          && <div className="absolute  m-3 bg-blue-50 text-red-600 rounded-xl px-2 py-1 text-sm z-10 flex items-center gap-2">
+            %{product.discount} OFF
+          </div>
+        }
 
         {/* Image Container */}
-        <div className="aspect-square w-full overflow-hidden relative cursor-pointer" onClick={onOpenModal}>
+        <div className="aspect-square w-full overflow-hidden relative cursor-pointer"
+          onClick={onOpenModal}>
           <img src={product.image_url} className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${isImageLoaded ? "opacity-100" : "opacity-0"
             }`} onLoad={() => setIsImageLoaded(true)} alt={product.name} />
 
@@ -24,8 +30,9 @@ function ProductCard({ product, onOpenModal }) {
           </div>
 
         </div>
-        <div className="flex flex-col gap-2 p-4 basis-[40%]">
-          <div className="flex flex-col gap-6">
+        {/* Info */}
+        <div className="flex flex-col grow gap-2 p-4 justify-between">
+          <div className="flex flex-col gap-6 grow justify-between">
             <div>
               <div className="text-black/50 uppercase">{product.brand}</div>
               <div className="text-black/90">{product.name}</div>

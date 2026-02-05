@@ -12,7 +12,7 @@ export default function Dropdown({ filterName, filterOptions }) {
   };
 
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative inline-block text-left w-full">
       <div>
         <button
           onClick={toggleDropdown}
@@ -47,7 +47,14 @@ export default function Dropdown({ filterName, filterOptions }) {
         >
           <div className="py-1" role="none">
             {
-              Object.entries(filterOptions).map(([optionName, optionValue]) => <DropdownOption optionName={toTitleCase(optionName)} optionValue={optionValue} />)
+              Object.entries(filterOptions).map(
+                ([optionName, optionValue]) =>
+                  <DropdownOption
+                    optionName={toTitleCase(optionName)}
+                    optionValue={optionValue}
+                    key={optionName + optionValue}
+                  />
+              )
             }
           </div>
         </div>
