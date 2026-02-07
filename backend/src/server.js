@@ -9,7 +9,11 @@ dotenv.config({
 import app from "./app.js";
 
 async function main() {
-  await mongoose.connect(process.env.MONGO_TEST_URL);
+  try {
+    await mongoose.connect(process.env.MONGO_TEST_URL);
+  } catch (e) {
+    console.log("Database Went Wrong", e);
+  }
 
   mongoose.connection.on("connected", () => {
     console.log("MongoDB connected");
