@@ -120,7 +120,7 @@ async function generateImageForProduct(product) {
 
 // Batch Process JSON File
 async function processProducts() {
-  const productsPath = path.join(import.meta.dirname, 'data', 'products.json');
+  const productsPath = path.join(import.meta.dirname, "data", "products.json");
   const raw = fs.readFileSync(productsPath, "utf8");
   const products = JSON.parse(raw);
 
