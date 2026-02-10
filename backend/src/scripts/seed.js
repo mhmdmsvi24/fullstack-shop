@@ -5,10 +5,16 @@ import { ProductModel } from "../models/products.schema.js";
 import productsJSON from "../data/products.json" with { type: "json" };
 import mongoose from "mongoose";
 
-async function seedDB() {
+mongoose
+  .connect(process.env.MONGO_TEST_URL)
+  .then(() => console.log("Connected Successfuly"));
+
+async function resetDB() {
   try {
-    await mongoose.connect(process.env.MONGO_TEST_URL);
-    await ProductModel.insertMany(productsJSON);
+    const newProducts = await ProductModel.insertMany(productsJSON);
+    console.log(
+      `${newProducts.length} new items added to ${ProductModel.modelName} collection`,
+    );
   } catch (e) {
     console.log(e);
   } finally {
@@ -17,4 +23,19 @@ async function seedDB() {
   }
 }
 
-seedDB();
+async function deleteDB() {
+  try {
+    const result = await ProductModel.deleteMany();
+    console.log(
+      `${result.deletedCount} items removed from ${ProductModel.modelName} collection`,
+    );
+  } catch (e) {
+    console.log(e);
+  } finally {
+    await mongoose.disconnect();
+    process.exit(0);
+  }
+}
+
+if (process.argv[2] === "--reset") resetDB();
+else if (process.argv[2] === "--delete") deleteDB();
