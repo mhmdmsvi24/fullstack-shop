@@ -26,7 +26,7 @@ async function main() {
   console.log("Mongoose readyState:", mongoose.connection.readyState);
 
   app.listen(process.env.PORT, () => {
-    console.log("---Server OK---");
+    console.log("---Server OK---", `Port: ${process.env.PORT}`);
   });
 }
 
