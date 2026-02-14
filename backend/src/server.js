@@ -1,35 +1,35 @@
 import dotenv from "dotenv";
 import path from "path";
 import mongoose from "mongoose";
+import app from "./app.js";
 
 dotenv.config({
   path: path.join(process.cwd(), ".env"),
 });
 
-import app from "./app.js";
+let server;
 
-async function main() {
-  try {
-    await mongoose.connect(process.env.MONGO_TEST_URL);
-  } catch (e) {
-    console.log("Database Went Wrong", e);
+function shutdown(err) {
+  console.error("FATAL:", err);
+  if (server) {
+    server.close(() => process.exit(1));
+  } else {
+    process.exit(1);
   }
 
-  mongoose.connection.on("connected", () => {
-    console.log("MongoDB connected");
-  });
+  setTimeout(() => process.exit(1), 5000);
+}
 
-  mongoose.connection.on("error", (err) => {
-    console.error("MongoDB connection error:", err);
-  });
+process.on("unhandledRejection", shutdown);
+process.on("uncaughtException", shutdown);
 
-  console.log("Mongoose readyState:", mongoose.connection.readyState);
+async function main() {
+  await mongoose.connect(process.env.MONGO_TEST_URL);
+  console.log("---MongoDB OK---");
 
-  app.listen(process.env.PORT, () => {
-    console.log("---Server OK---", `Port: ${process.env.PORT}`);
+  server = app.listen(process.env.PORT, () => {
+    console.log(`---Server OK--- Port: ${process.env.PORT}`);
   });
 }
 
-main().catch((err) => {
-  console.log(err);
-});
+main().catch(shutdown);
