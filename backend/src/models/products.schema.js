@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import slugify from "slugify";
 
 const productsSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true },
+  name: { type: String, required: true, unique: true, minLength: 4 },
   desc: { type: String },
   category: { type: String, required: true },
   size: { type: String, required: true },
@@ -10,9 +10,9 @@ const productsSchema = new mongoose.Schema({
   rating: { type: Number, min: 0, max: 5, required: true, default: 0.0 },
   price: {
     type: mongoose.Schema.Types.Decimal128,
-    requried: true,
+    required: true,
   },
-  discount: { type: Number },
+  discount: { type: Number, min: 0, max: 1 },
   quantity: { type: Number, required: true },
   brand: { type: String },
   color: { type: String },
@@ -23,7 +23,7 @@ const productsSchema = new mongoose.Schema({
 
 productsSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
-  next(); 
+  next();
 });
 
 productsSchema.set("toJSON", {
