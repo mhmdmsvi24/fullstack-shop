@@ -1,4 +1,4 @@
-import ProductModel from "../models/product.schema.js";
+import ProductModel from "../models/product.model.js";
 import { APIFeatures } from "../utils/helpers.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/app.error.js";
