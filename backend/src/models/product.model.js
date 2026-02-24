@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
 
-const productsSchema = new mongoose.Schema({
+const productSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true, minLength: 4 },
   desc: { type: String },
   category: { type: String, required: true },
@@ -21,16 +21,18 @@ const productsSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now(), select: false },
 });
 
-productsSchema.pre("save", function (next) {
+productSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
-productsSchema.set("toJSON", {
+productSchema.set("toJSON", {
   transform: (doc, ret) => {
     ret.price = ret.price?.toString();
     return ret;
   },
 });
 
-export const ProductModel = mongoose.model("Product", productsSchema);
+const ProductModel = mongoose.model("Product", productSchema);
+
+export default ProductModel;

@@ -1,79 +1,84 @@
 import AppError from "../utils/app.error.js";
 
-// ! Don't remove this eslint rule, removeing unused next results in error
 // eslint-disable-next-line no-unused-vars
 const globalErrorController = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
-  err.status = err.status || "Something Went Wrong! It's Not You, It's Us :(";
-  // If it's production don't send error stack
+  err.status = err.status || "error";
+
   if (process.env.NODE_ENV === "development") {
-    sendErrorDevelopment(err, res);
-  } else {
-    let error = { ...err };
-
-    if (error.name === "CastError") error = handleCastErrors(error);
-    else if (error.name === "BSONError") error = handleBSONError(error);
-    else if (error.code === 11000) error = handleDuplicatedFiled(error);
-
-    if (error.errors) {
-      let errorData = {};
-
-      for (let [k, v] of Object.entries(error.errors)) {
-        errorData[k] = {};
-        errorData[k].name = v.constructor.name;
-        errorData[k].message = `${v.kind} ${v.path} can't be ${v.value}`;
-      }
-
-      error = handleValidation(errorData);
-    }
-
-    sendErrorProduction(error, res);
+    return sendErrorDevelopment(err, res);
   }
+
+  let error = { ...err };
+
+  // Mongo / Mongoose handlers
+  if (error.name === "CastError") error = handleCastErrors(error);
+  if (error.name === "BSONError") error = handleBSONError();
+  if (error.code === 11000) error = handleDuplicatedField(error);
+  if (error.errors) error = handleValidation(error.errors);
+  if (error.name === "JsonWebTokenError") error = hadnleJWTError();
+  if (error.name === "TokenExpireError") error = handleJWTExpireError();
+
+  sendErrorProduction(error, res);
 };
 
+export default globalErrorController;
+
+// Development Error Handling
 function sendErrorDevelopment(err, res) {
+  console.log(err);
   res.status(err.statusCode).json({
-    status: { code: err.statusCode, message: err.status },
+    status: err.status,
+    message: err.message,
     error: err,
     stack: err.stack,
   });
 }
 
+// Production Custom Error Handling
 function sendErrorProduction(err, res) {
   if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: { code: err.statusCode, message: err.status },
-      error: err.message,
-    });
-    // Programming Errors, don't leak details
-  } else {
-    res.status(500).json({
-      status: { code: 500, message: "Internal Server Error" },
-      message: "Oops! It's not you it's us :(",
+    return res.status(err.statusCode).json({
+      status: err.status,
+      message: err.message,
     });
   }
+
+  // Programming / unknown error → hide details
+  console.error("UNEXPECTED ERROR:", err);
+
+  res.status(500).json({
+    status: "error",
+    message: "Something went very wrong",
+  });
 }
 
-// Error Handlers
+// Specific Error Handlers
 function handleCastErrors(err) {
-  const message = `Invalid ${err.path}: ${err.value}`;
-  return new AppError(message, 400);
+  return new AppError(`Invalid ${err.path}: ${err.value}`, 400);
 }
 
-function handleBSONError(err) {
-  const message = `Invalid ${err.path}: ${err.value}`;
-  return new AppError(message, 400);
+function handleBSONError() {
+  return new AppError(`Invalid ID format`, 400);
 }
 
-function handleDuplicatedFiled(err) {
-  const value = err.errorResponse.errmsg.match(/(["'])(\\?.)*?\1/)[0];
-  // to remove double back slashes
-  const message = `Duplicated Field: ${value.split("").slice(1, -1).join("")} - Already Exists`;
-  return new AppError(message, 400);
+function handleDuplicatedField(err) {
+  const value = err.errorResponse?.errmsg?.match(/(["'])(\\?.)*?\1/)?.[0];
+
+  return new AppError(
+    `Duplicate field value: ${value?.slice(1, -1) || "unknown"}`,
+    400,
+  );
 }
 
-function handleValidation(err) {
-  return new AppError(err, 400);
+function handleValidation(errors) {
+  const messages = Object.values(errors).map((el) => el.message);
+
+  return new AppError(messages.join(". "), 400);
 }
 
-export default globalErrorController;
+const hadnleJWTError = () =>
+  new AppError("Invalid Token! Please login again", 401);
+
+const handleJWTExpireError = () =>
+  new AppError("Invalid Session, Please login again", 401);

@@ -1,0 +1,65 @@
+// An Exmaple of validation error for testing
+{
+  "error": {
+    "errors": {
+      "name": {
+        "name": "ValidatorError",
+        "message": "Invalid Name, Only letters and numbers are allowed",
+        "properties": {
+          "message": "Invalid Name, Only letters and numbers are allowed",
+          "type": "user defined",
+          "path": "name",
+          "value": "A!@#"
+        },
+        "kind": "user defined",
+        "path": "name",
+        "value": "A!@#"
+      },
+      "email": {
+        "name": "ValidatorError",
+        "message": "Invalid Email Address",
+        "properties": {
+          "message": "Invalid Email Address",
+          "type": "user defined",
+          "path": "email",
+          "value": "aliatexample.com"
+        },
+        "kind": "user defined",
+        "path": "email",
+        "value": "aliatexample.com"
+      },
+      "phone": {
+        "name": "ValidatorError",
+        "message": "Invalid Phone Number",
+        "properties": {
+          "message": "Invalid Phone Number",
+          "type": "user defined",
+          "path": "phone",
+          "value": "12345"
+        },
+        "kind": "user defined",
+        "path": "phone",
+        "value": "12345"
+      },
+      "password": {
+        "name": "ValidatorError",
+        "message": "Password is weak",
+        "properties": {
+          "message": "Password is weak",
+          "type": "user defined",
+          "path": "password",
+          "value": "weak"
+        },
+        "kind": "user defined",
+        "path": "password",
+        "value": "weak"
+      }
+    },
+    "_message": "User validation failed",
+    "statusCode": 500,
+    "status": "Something Went Wrong! It's Not You, It's Us :(",
+    "name": "ValidationError",
+    "message": "User validation failed: name: Invalid Name, Only letters and numbers are allowed, email: Invalid Email Address, phone: Invalid Phone Number, password: Password is weak"
+  },
+  "stack": "ValidationError: User validation failed: name: Invalid Name, Only letters and numbers are allowed, email: Invalid Email Address, phone: Invalid Phone Number, password: Password is weak\n    at Document.invalidate (/home/mmd/Desktop/Projects/university_shop_project/backend/node_modules/.pnpm/mongoose@8.16.4/node_modules/mongoose/lib/document.js:3354:32)\n    at /home/mmd/Desktop/Projects/university_shop_project/backend/node_modules/.pnpm/mongoose@8.16.4/node_modules/mongoose/lib/document.js:3115:17\n    at /home/mmd/Desktop/Projects/university_shop_project/backend/node_modules/.pnpm/mongoose@8.16.4/node_modules/mongoose/lib/schemaType.js:1410:9\n    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)"
+}

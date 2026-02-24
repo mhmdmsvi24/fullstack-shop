@@ -1,4 +1,4 @@
-import { ProductModel } from "../models/products.schema.js";
+import ProductModel from "../models/product.model.js";
 import { APIFeatures } from "../utils/helpers.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/app.error.js";
@@ -81,17 +81,10 @@ export const findProductAndDelete = catchAsync(async (req, res, next) => {
 
   // If the ID is invalid
   if (!product) {
-    return next(new AppError("This Tour doesn't exist!", 404));
-  }
-
-  if (!product) {
-    res.status(500).json({
-      status: { code: 404, message: "Not Found" },
-      error: ["Couldn't find the product!"],
-    });
+    return next(new AppError("Couldn't find the product!", 404));
   }
 
   await ProductModel.findByIdAndDelete(id);
 
-  res.status(204);
+  res.status(204).send();
 });

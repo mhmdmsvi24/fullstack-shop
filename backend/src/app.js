@@ -4,6 +4,7 @@ import cors from "cors";
 import productRouter from "./routers/product.router.js";
 import AppError from "./utils/app.error.js";
 import globalErrorController from "./controllers/error.controller.js";
+import authRouter from "./routers/auth.router.js";
 
 const app = express();
 
@@ -21,9 +22,10 @@ else app.use(morgan("combined"));
 
 // Routers
 app.use("/api/v1/products", productRouter);
+app.use("/api/v1/auth", authRouter)
 
 // Invalid Route
-app.all("/*splat", (req, res, next) => {
+app.all("*splat", (req, res, next) => {
   next(new AppError(`${req.originalUrl} Doesn't Exist`, 404));
 });
 
